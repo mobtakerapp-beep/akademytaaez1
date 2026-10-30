@@ -4,6 +4,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#e987b5">
+    <link rel="manifest" href="/manifest.webmanifest">
+    <link rel="icon" href="/app-icon.svg" type="image/svg+xml">
+    <link rel="apple-touch-icon" href="/app-icon.svg">
     <title>أكاديمية  التعزيز</title>
     <meta http-equiv="Content-Security-Policy" content="default-src * 'unsafe-inline' 'unsafe-eval' data: blob:; img-src * data: blob:; font-src * data:;">    <link href="https://fonts.googleapis.com/css2?family=Almarai:wght@400;700&family=Amiri:ital,wght@0,400;0,700&family=Cairo:wght@400;700&family=Reem+Kufi:wght@400;700&family=Tajawal:wght@400;700&display=swap" rel="stylesheet">    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
@@ -9929,6 +9933,55 @@ div[draggable="true"]:active {
     </script>
 </head>
 <body id="body" class="classic-theme">
+<style id="pwa-install-styles">
+#pwa-install-button{position:fixed;left:18px;bottom:18px;z-index:10001;display:flex;align-items:center;gap:9px;padding:12px 18px;border:0;border-radius:999px;background:linear-gradient(135deg,#e987b5,#76b9e8);color:#fff;font-family:'Cairo',sans-serif;font-size:15px;font-weight:700;box-shadow:0 7px 24px rgba(116,91,133,.28);cursor:pointer;transition:transform .2s,box-shadow .2s}
+#pwa-install-button:hover{transform:translateY(-2px);box-shadow:0 10px 28px rgba(116,91,133,.35)}
+#pwa-install-button svg{width:21px;height:21px;flex:none}
+#pwa-install-button[hidden]{display:none!important}
+@media(max-width:600px){#pwa-install-button{left:12px;bottom:12px;padding:11px 15px;font-size:14px}}
+</style>
+<button id="pwa-install-button" type="button" aria-label="تثبيت تطبيق أكاديمية التعزيز">
+<svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 3v11m0 0 4-4m-4 4-4-4M5 16v3a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-3" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+<span>تثبيت التطبيق</span></button>
+<script id="pwa-install-logic">
+(() => {
+  const installButton = document.getElementById('pwa-install-button');
+  if (!installButton) return;
+  let installPrompt = null;
+  const isStandalone = () => window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
+  const isIOS = /iphone|ipad|ipod/i.test(navigator.userAgent) && !window.MSStream;
+  const refreshButton = () => { installButton.hidden = isStandalone(); };
+  refreshButton();
+  window.addEventListener('beforeinstallprompt', (event) => {
+    event.preventDefault();
+    installPrompt = event;
+    refreshButton();
+  });
+  window.addEventListener('appinstalled', () => {
+    installPrompt = null;
+    installButton.hidden = true;
+  });
+  installButton.addEventListener('click', async () => {
+    if (isStandalone()) { installButton.hidden = true; return; }
+    if (installPrompt) {
+      installPrompt.prompt();
+      const choice = await installPrompt.userChoice;
+      installPrompt = null;
+      if (choice && choice.outcome === 'accepted') installButton.hidden = true;
+      return;
+    }
+    if (isIOS) {
+      alert('لتثبيت الأكاديمية على جهازك: اضغطي على زر المشاركة في Safari، ثم اختاري «إضافة إلى الشاشة الرئيسية».');
+      return;
+    }
+    alert('لو لم تظهر نافذة التثبيت، افتحي قائمة المتصفح واختاري «تثبيت التطبيق» أو «إضافة إلى الشاشة الرئيسية». تأكدي من فتح الموقع عبر HTTPS.');
+  });
+  if ('serviceWorker' in navigator && (location.protocol === 'https:' || location.hostname === 'localhost')) {
+    window.addEventListener('load', () => navigator.serviceWorker.register('/service-worker.js').catch((error) => console.warn('تعذر تسجيل خدمة التطبيق:', error)));
+  }
+  window.matchMedia('(display-mode: standalone)').addEventListener?.('change', refreshButton);
+})();
+</script>
 <div id="splash-screen">
     <img src="assets/avatars/BDA.png" alt="جاري التحميل..." style="max-width: 100%; height: auto;">
 </div>
