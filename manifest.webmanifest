@@ -1,0 +1,22 @@
+{
+  "id": "/",
+  "name": "أكاديمية التعزيز",
+  "short_name": "أكاديمية التعزيز",
+  "description": "تطبيق أكاديمية التعزيز للمعلمين",
+  "lang": "ar",
+  "dir": "rtl",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#fff7fb",
+  "theme_color": "#e987b5",
+  "icons": [
+    {
+      "src": "/app-icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
